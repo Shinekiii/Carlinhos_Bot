@@ -1,0 +1,39 @@
+body {
+  background-color: rgb(107, 107, 241);
+  font: normal, 15pt, arial;
+}
+
+h1 {
+  text-align: center;
+
+}
+
+#jogos {
+
+  background-color: aqua;
+}
+
+header {
+  color: aliceblue;
+  text-align: center;
+
+}
+
+section {
+  background-color: aliceblue;
+  border-radius: 10px;
+  padding: 15px;
+  width: 1000px;
+  margin: auto;
+  box-shadow: 3px 3px 10px hsla(0, 0%, 0%, 0.363);
+
+}
+
+footer {
+  color: aliceblue;
+  text-align: center;
+  font-style: italic;
+}
+
+
+background-image: radial-gradient(#1C2540, #1B1D22);

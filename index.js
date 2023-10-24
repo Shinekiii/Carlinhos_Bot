@@ -1,9 +1,32 @@
-//Pacotes npm baixados
-const tmi = require('tmi.js'),
-  { channel, username, password } = require('./settings.json');
+// Pacotes npm baixados
+const tmi = require('tmi.js');
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('points.db');
+const TwitchAPI = require('twitch-api');
+
+const { channel, channel2, username, password } = require('./settings.json');
 
 /*criação do objetO "opções", onde será armazenaremos a configuração para a 
 conexão com o servidor de chat da twitch */
+
+const twitch = new TwitchAPI({
+  clientId: 'ed2iwwf2nnbxievqivcrha43gmt4j1',
+  clientSecret: '7yqtxddxk272qyvj0938k0ucerhnqg'
+});
+
+//loja
+const currentPoints = {};
+const chavesResgataveis = {
+  key: {
+    item: "Pacote de Pontos",
+    preco: 100
+  },
+  chave2: {
+    item: "Emote Exclusivo",
+    preco: 200
+  },
+}
+
 
 const options = {
   options: { debug: true },
@@ -19,9 +42,12 @@ const options = {
 
     //aqui é aonde forneceremos o canal que especificamos em nosso "settings.json"
   },
-  channels: [channel]
+  channels: [channel, channel2]
 
 };
+
+
+
 
 //criação do cliente para se conectar aos servidores da twitch
 //o "catch(console.error)" é usado para demostrar no terminal se houver um erro
@@ -41,11 +67,12 @@ client.on('message', (channel, user, message, self) => {
 
   //salve
 
-  if (message == '!salve') {
+  if (message == 'salve') {
     client.say(channel, `@${user.username}, salve meu bom`);
 
 
   }
+
 
   //street ganha do fighter
   if (message == '!street') {
@@ -235,7 +262,7 @@ client.on('message', (channel, user, message, self) => {
 
   //Frame data da Juri
 
-  if (message == '!Juri') {
+  if (message == '!juri') {
     client.say(channel, `@${user.username}, Site para o Frame Data da Juri: https://wiki.supercombo.gg/w/Street_Fighter_6/Juri `);
 
   }
@@ -246,10 +273,6 @@ client.on('message', (channel, user, message, self) => {
     client.say(channel, `@${user.username}, Site para o Frame Data: https://wiki.supercombo.gg/w/Street_Fighter_6 `);
 
   }
-
-
-
-
 
 
   //Help
@@ -272,27 +295,41 @@ client.on('message', (channel, user, message, self) => {
   if (message == '!F') {
     client.say(channel, `@${user.username}, F Elden Bling `);
 
+  }
 
-    //reboco
+  //sus
 
-    if (message == '!reboco') {
-      client.say(channel, `@${user.username},   Receita de reboco. Misture quatro carrinhos de areia fina com um saco de cimento e dois sacos de cal. Adicione água, misturando até ter uma massa homogénea. Com uma colher de pedreiro, jogue a massa na parede, espere a massa “puxar” e faça o corte da massa com uma régua de pedreiro, deixando uma camada uniforme sobre a parede. Com auxílio de uma broxa e de uma desempenadeira, tira as imperfeições da massa. Por fim use um bloco de espuma úmido para dar o acabamento final.`);
-
-    }
-
-    // james
-
-    if (message == '!james') {
-      client.say(channel, `@${user.username},OH JAMES EU QUERO UMA SALADA DE FRUTAS, OLHA QUE HABILIDADE OLHA QUE HABILIDADE  EU QUERO UMA SALADA  DE FRUTA JAMESNO CAPRICHO DE 5  DE 7 DE 10, ME DA UMA DE 5, AQUI TÁ NA MÃO TA AQUI IIIIISSO JAMES  MUITO OBRIGADO  BRIGADO  DEUS ABENÇOE  ESSE É O JAMES  HÃ???  DA SALADA DE FRUTAS  O ARTISTA DE CIRCO `);
-
-    }
+  if (message == '!sus') {
+    client.say(channel, `@${user.username}, Vocês precisam calar a porra dessa boca e parar de falar sobre Among Us. Ontem eu tava no banheiro tentando bater uma, e quando eu olhei pra cabeça do meu pau, eu pensei “hehe, parece com o personagem do Among Us.” “Haha, meu pau é sus.” E vocês sabem o que aconteceu?? Eu perdi a minha ereção. EU PERDI A PORRA DA MINHA EREÇÃO, POR CAUSA DE VOCÊS, QUE NÃO PARAM DE FALAR DESSE JOGO. PUTA QUE PARIU O QUE VOCÊS FIZERAM COM O MEU CÉREBRO SEUS BANDO DE FILHA DA PUTA EU ODEIO TODOS VOCÊS `);
 
   }
 
-   //Nightbot
+
+  //reboco
+
+  if (message == '!reboco') {
+    client.say(channel, `@${user.username}, Receita de reboco. Misture quatro carrinhos de areia fina com um saco de cimento e dois sacos de cal.Adicione água, misturando até obter uma massa homogénea.Com uma colher de pedreiro, jogue a massa na parede, espere a massa puxar e faça o corte da massa com uma régua de pedreiro, deixando uma camada uniforme sobre a parede.Com o auxílio de uma broxa e de uma desempenadeira, tire as imperfeições da massa.Por fim, use um bloco de espuma úmido para dar o acabamento final `);
+
+  }
+
+  //golpe
+
+  if (message == '!warner') {
+    client.say(channel, `@${user.username}, Olá, sou gerente de recrutamento da Warner Media. como vai você? Você está procurando outra fonte ainda de renda?Nossa empresa trabalha com profissionais de marketing do Tik Tok que estão dispostos a pagar para aumentar a visibilidade, então precisamos contratar muitos colegas de trabalho para curtir o conteúdo do Tik Tok e pagamos R$ 3 por like, depende de você, quão livre você for, você ganhará mais mais de R$ 500 por dia. Você está interessado em trabalhar conosco? `);
+
+  }
+
+  //james
+
+  if (message == '!james') {
+    client.say(channel, `@${user.username}, OH JAMES EU QUERO UMA SALADA DE FRUTAS🥗🥵🍋🍍🍌, OLHA🧐 QUE HABILIDADE🏂 OLHA QUE HABILIDADE 🥵⚽ EU QUERO UMA SALADA 🥗 DE FRUTA🍍🍉 JAMES🚶NO CAPRICHO 👌DE 5 🖐️ DE 7🖐️✌️ DE 10🖐️🖐️, ME DA UMA DE 5🖐️, AQUI TÁ NA MÃO ✋🙎🍹TA AQUI ☝️IIIIISSO JAMES 😋 MUITO OBRIGADO 🤝 BRIGADO 😀👍 DEUS ABENÇOE 🙏🤲 ESSE É O JAMES 👉👉😎👈👈 HÃ??? 🧐 DA SALADA DE FRUTAS 🍹😋 O ARTISTA DE CIRCO 🎪 `);
+
+  }
+
+  //Nightbot
 
 
-   if (message == '!M') {
+  if (message == '!M') {
     client.say(channel, `@${user.username},vai se fuder o night bot já faz isso, pede pra ele`);
     client.say(channel, `!parm`);
 
@@ -323,8 +360,6 @@ client.on('message', (channel, user, message, self) => {
       client.say(channel, `Desculpe, @${user.username}, Caiu Coroa.`);
     }
   }
-
-
 });
 
 //amor
@@ -344,10 +379,6 @@ client.on('message', (channel, tags, message, self) => {
 });
 
 //pontos
-
-
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database(':memory:'); // Use um arquivo em vez de ':memory:' para armazenar persistentemente
 
 // Cria a tabela se ela não existir
 db.serialize(() => {
@@ -374,9 +405,17 @@ client.on('message', (channel, tags, message, self) => {
         }
         if (row) {
           const currentPoints = row.points + amount;
-          db.run('UPDATE points SET points = ? WHERE username = ?', currentPoints, username);
+          db.run('UPDATE points SET points = ? WHERE username = ?', currentPoints, username, (err) => {
+            if (err) {
+              console.error(err.message);
+            }
+          });
         } else {
-          db.run('INSERT INTO points (username, points) VALUES (?, ?)', username, amount);
+          db.run('INSERT INTO points (username, points) VALUES (?, ?)', username, amount, (err) => {
+            if (err) {
+              console.error(err.message);
+            }
+          });
         }
         client.say(channel, `@${username} recebeu ${amount} pontos!`);
       });
@@ -396,9 +435,17 @@ client.on('message', (channel, tags, message, self) => {
         }
         if (row) {
           const currentPoints = Math.max(row.points - amount, 0);
-          db.run('UPDATE points SET points = ? WHERE username = ?', currentPoints, username);
+          db.run('UPDATE points SET points = ? WHERE username = ?', currentPoints, username, (err) => {
+            if (err) {
+              console.error(err.message);
+            }
+          });
         } else {
-          db.run('INSERT INTO points (username, points) VALUES (?, ?)', username, 0);
+          db.run('INSERT INTO points (username, points) VALUES (?, ?)', username, 0, (err) => {
+            if (err) {
+              console.error(err.message);
+            }
+          });
         }
         client.say(channel, `@${username} perdeu ${amount} pontos!`);
       });
@@ -414,6 +461,91 @@ client.on('message', (channel, tags, message, self) => {
       }
       const userPoints = row ? row.points : 0;
       client.say(channel, `@${username}, você tem ${userPoints} pontos!`);
+
+
     });
   }
+});
+
+// ... (outros códigos) ...
+
+
+//loja
+
+
+// Comando para resgatar chaves na loja
+client.on('message', (channel, tags, message, self) => {
+  if (message.startsWith('!resgatar')) {
+    const parametros = message.split(' ');
+    const chave = parametros[1];
+    const usuario = tags.username;
+
+    if (chavesResgataveis[chave]) {
+      const { item, preco } = chavesResgataveis[chave];
+
+      // Verificar se o usuário possui pontos suficientes para resgatar a chave
+      db.get('SELECT * FROM points WHERE username = ?', usuario, (err, row) => {
+        if (err) {
+          console.error(err.message);
+        }
+
+        if (row && row.points >= preco) {
+          const novoSaldo = row.points - preco;
+          db.run('UPDATE points SET points = ? WHERE username = ?', [novoSaldo, usuario], (err) => {
+            if (err) {
+              console.error(err.message);
+            } else {
+              // Salvar o registro da compra na tabela 'compras'
+              const dataAtual = new Date().toISOString();
+              db.run('INSERT INTO compras (username, item, preco, data) VALUES (?, ?, ?, ?)', [usuario, item, preco, dataAtual], (err) => {
+                if (err) {
+                  console.error(err.message);
+                }
+              });
+
+
+              // Comando para verificar o histórico de compras na tabela 'compras'
+              client.on('message', (channel, tags, message, self) => {
+                if (message.toLowerCase() === '!log') {
+                  db.all('SELECT * FROM compras', (err, rows) => {
+                    if (err) {
+                      console.error(err.message);
+                    }
+                    if (rows.length > 0) {
+                      client.say(channel, "Histórico de compras:");
+                      rows.forEach((row) => {
+                        const logMessage = `ID: ${row.id}, Usuário: ${row.username}, Item: ${row.item}, Preço: ${row.preco}, Data: ${row.data}`;
+                        client.say(channel, logMessage);
+                        console.log(logMessage); // Exibir o log no console do servidor
+                      });
+                    } else {
+                      client.say(channel, "Nenhuma compra encontrada no histórico.");
+                      console.log("Nenhuma compra encontrada no histórico."); // Exibir o log no console do servidor
+                    }
+                  });
+                }
+              });
+
+
+              client.say(channel, `@${usuario}, você resgatou um(a) ${chave} e recebeu o item ${item}!`);
+            }
+          });
+        } else {
+          client.say(channel, `@${usuario}, você não possui pontos suficientes para resgatar um(a) ${chave}!`);
+        }
+      });
+    } else {
+      client.say(channel, `@${usuario}, um(a) ${chave} não é válida!`);
+    }
+  }
+});
+
+
+
+// ... (outros códigos) ...
+
+
+// Fechar a conexão com o banco de dados quando não for mais necessário
+process.on('exit', () => {
+  db.close();
 });
