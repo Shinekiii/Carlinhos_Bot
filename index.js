@@ -1,18 +1,21 @@
 // Pacotes npm baixados
 const tmi = require('tmi.js');
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('points.db');
-const TwitchAPI = require('twitch-api');
+const play = require('play-sound')();
 
-const { channel, channel2, username, password } = require('./settings.json');
+const { channel, channel2, channel3, username, password } = require('./settings.json');
+
 
 /*criação do objetO "opções", onde será armazenaremos a configuração para a 
 conexão com o servidor de chat da twitch */
 
-const twitch = new TwitchAPI({
-  clientId: 'ed2iwwf2nnbxievqivcrha43gmt4j1',
-  clientSecret: '7yqtxddxk272qyvj0938k0ucerhnqg'
+let db = new sqlite3.Database('C:\\Users\\rache\\OneDrive\\Área de Trabalho\\Bot_twitch\\points.db', (err) => {
+  if (err) {
+    console.error(err.message);
+  }
+  console.log('Conectado ao banco de dados.');
 });
+
 
 //loja
 const currentPoints = {};
@@ -25,6 +28,10 @@ const chavesResgataveis = {
     item: "Emote Exclusivo",
     preco: 200
   },
+  xamuel: {
+    item: "Audio do Xamuel",
+    preco: 1
+  }
 }
 
 
@@ -42,11 +49,9 @@ const options = {
 
     //aqui é aonde forneceremos o canal que especificamos em nosso "settings.json"
   },
-  channels: [channel, channel2]
+  channels: [channel, channel2, channel3]
 
 };
-
-
 
 
 //criação do cliente para se conectar aos servidores da twitch
@@ -72,6 +77,36 @@ client.on('message', (channel, user, message, self) => {
 
 
   }
+
+  //princesa
+
+  if (message == '!princesa') {
+    client.say(channel, `Princesa será sempre eterna 🐶👑🖤`);
+
+
+  }
+
+  // audios
+  if (message === '!xamuel.mp3') {
+    const player = require('play-sound')();
+    const pathToMp3 = 'audios/xamuel.wav';
+    // Reproduz o arquivo de áudio
+    try {
+      console.log('Tentando reproduzir o arquivo de áudio...');
+      player.play(pathToMp3, function (err) {
+        if (err) {
+          console.error('Ocorreu um erro ao reproduzir o arquivo de áudio:', err);
+        } else {
+          console.log('Arquivo de áudio reproduzido com sucesso!');
+        }
+      });
+    } catch (error) {
+      console.error('Ocorreu um erro durante a reprodução do áudio:', error);
+    }
+  }
+
+
+
 
 
   //street ganha do fighter
@@ -297,6 +332,13 @@ client.on('message', (channel, user, message, self) => {
 
   }
 
+  //NegoPlanador
+
+  if (message == '!planador') {
+    client.say(channel, `@NegoPlanador , Diario de um detento - racionais Mc: https://www.youtube.com/watch?v=dGFxdmuDA4A `);
+
+  }
+
   //sus
 
   if (message == '!sus') {
@@ -339,7 +381,7 @@ client.on('message', (channel, user, message, self) => {
   //randomizador de nomes
 
   if (message.toLowerCase() === '!randomnome') {
-    const nomes = ['Nego do Bordel', 'Ryu Indiano', 'Amante da Beiçola', 'Tommy Vercetti das Arabias', 'Fã N°1 do Xamuel']; // Insira os nomes que você deseja randomizar
+    const nomes = ['Nego do Bordel', 'Ryu Indiano', 'Amante da Beiçola', 'Tommy Vercetti das Arabias', 'Fã N°1 do Xamuel', 'Porteiro de wakanda', 'meu indiano favorito']; // Insira os nomes que você deseja randomizar
     const randomIndex = Math.floor(Math.random() * nomes.length);
     const randomNome = nomes[randomIndex];
     client.say(channel, `Toddyyz Streamer Streams, ou para os mais intimos ${randomNome}`);
