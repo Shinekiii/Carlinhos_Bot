@@ -1,0 +1,6 @@
+DISPLAY_NAME=Carlinhos_Bot
+DESCRIPITON
+MAIN=index.html
+MEMORY=128
+VERSION=recommended
+SUBDOMAIN=Bot_Carlinhos

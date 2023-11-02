@@ -75,7 +75,11 @@ client.on('message', (channel, user, message, self) => {
   if (message == 'salve') {
     client.say(channel, `@${user.username}, salve meu bom`);
 
+  }
 
+  //lunabeuty
+  if (message == "!lunabeauty") {
+    client.say(channel, `@${user.username} Ué mas isso não é coisa de mulher ?, é pra quem quiser pra quem tem luta e quem tem fé, pra quem tem empoderamento e tá de pé, dança com a gente luna beauty e xamuel`)
   }
 
   //princesa
@@ -83,7 +87,12 @@ client.on('message', (channel, user, message, self) => {
   if (message == '!princesa') {
     client.say(channel, `Princesa será sempre eterna 🐶👑🖤`);
 
+  }
 
+  //steve?
+
+  if (message == '!steve?') {
+    client.say(channel, 'que isso steve https://clips.twitch.tv/SuccessfulTardyMeerkatLeeroyJenkins-LIgA3CKUKz9af3gG')
   }
 
   // audios
@@ -381,13 +390,48 @@ client.on('message', (channel, user, message, self) => {
   //randomizador de nomes
 
   if (message.toLowerCase() === '!randomnome') {
-    const nomes = ['Nego do Bordel', 'Ryu Indiano', 'Amante da Beiçola', 'Tommy Vercetti das Arabias', 'Fã N°1 do Xamuel', 'Porteiro de wakanda', 'meu indiano favorito']; // Insira os nomes que você deseja randomizar
+    const nomes = ['Nego do Bordel', 'Ryu Indiano', 'Amante da Beiçola', 'Tommy Vercetti das Arabias', 'Fã N°1 do Xamuel', 'Porteiro de wakanda', 'meu indiano favorito', 'bahubali pt.2',
+      'emo indiano']; // Insira os nomes que você deseja randomizar
     const randomIndex = Math.floor(Math.random() * nomes.length);
     const randomNome = nomes[randomIndex];
     client.say(channel, `Toddyyz Streamer Streams, ou para os mais intimos ${randomNome}`);
 
 
   }
+
+  //randomizador de nomes
+
+  if (message.toLowerCase() === '!randomnevi') {
+    const nomes = ['Femboy Lover', 'Amante do Piko', 'Player medio de gacha', ' Pobre de Alphaville']; // Insira os nomes que você deseja randomizar
+    const randomIndex = Math.floor(Math.random() * nomes.length);
+    const randomNome = nomes[randomIndex];
+    client.say(channel, `Nevizard, ou para os mais intimos ${randomNome}`);
+
+
+  }
+
+  //randomizador de nomes
+
+  if (message.toLowerCase() === '!randomnego') {
+    const nomes = ['Pantera negra da bahia', ' inspiração pra musica diario de um detendo do racionais', '', '']; // Insira os nomes que você deseja randomizar
+    const randomIndex = Math.floor(Math.random() * nomes.length);
+    const randomNome = nomes[randomIndex];
+    client.say(channel, `Nevizard, ou para os mais intimos ${randomNome}`);
+
+
+  }
+
+  //randomizador de nomes
+
+  if (message.toLowerCase() === '!randomelliagah') {
+    const nomes = [' Coxa de Aço', ' Rabudão das Arábias', 'Lucinha Egrilo', 'Gasosa do Mk']; // Insira os nomes que você deseja randomizar
+    const randomIndex = Math.floor(Math.random() * nomes.length);
+    const randomNome = nomes[randomIndex];
+    client.say(channel, `Elliagah, ou para os mais intimos ${randomNome}`);
+
+
+  }
+
 
   //sorte
 
@@ -507,9 +551,83 @@ client.on('message', (channel, tags, message, self) => {
 
     });
   }
-});
 
-// ... (outros códigos) ...
+// Função para distribuir pontos aleatoriamente para um usuário aleatório a cada 30 minutos
+setInterval(() => {
+  const minPoints = 10;
+  const maxPoints = 50;
+  const minTime = 30 * 60 * 1000; // 30 minutos em milissegundos
+  const randomPoints = Math.floor(Math.random() * (maxPoints - minPoints + 1)) + minPoints;
+
+  db.all('SELECT username FROM points', (err, rows) => {
+    if (err) {
+      console.error(err.message);
+    }
+    const randomRowIndex = Math.floor(Math.random() * rows.length);
+    const selectedUser = rows[randomRowIndex].username;
+
+    db.get('SELECT * FROM points WHERE username = ?', selectedUser, (err, row) => {
+      if (err) {
+        console.error(err.message);
+      }
+      if (row) {
+        const currentPoints = row.points + randomPoints;
+        db.run('UPDATE points SET points = ? WHERE username = ?', currentPoints, selectedUser, (err) => {
+          if (err) {
+            console.error(err.message);
+          }
+        });
+      } else {
+        db.run('INSERT INTO points (username, points) VALUES (?, ?)', selectedUser, randomPoints, (err) => {
+          if (err) {
+            console.error(err.message);
+          }
+        });
+      }
+      client.say(channel, `@${selectedUser} recebeu ${randomPoints} pontos!`);
+    });
+  });
+}, minTime);
+
+// Comando para o cassino
+if (message.toLowerCase().startsWith('!cassino')) {
+  const username = tags.username;
+  const betAmount = parseInt(message.split(' ')[1]);
+
+  db.get('SELECT * FROM points WHERE username = ?', username, (err, row) => {
+    if (err) {
+      console.error(err.message);
+    }
+    if (row) {
+      const currentPoints = row.points;
+      if (betAmount && betAmount <= currentPoints) {
+        const randomNumber = Math.floor(Math.random() * 100) + 1; // Gera um número aleatório entre 1 e 100
+        if (randomNumber > 50) {
+          const winnings = betAmount * 2;
+          const newPoints = currentPoints + winnings;
+          db.run('UPDATE points SET points = ? WHERE username = ?', newPoints, username, (err) => {
+            if (err) {
+              console.error(err.message);
+            }
+          });
+          client.say(channel, `@${username} ganhou ${winnings} pontos no cassino!`);
+        } else {
+          const newPoints = currentPoints - betAmount;
+          db.run('UPDATE points SET points = ? WHERE username = ?', newPoints, username, (err) => {
+            if (err) {
+              console.error(err.message);
+            }
+          });
+          client.say(channel, `@${username} perdeu ${betAmount} pontos no cassino!`);
+        }
+      } else {
+        client.say(channel, `@${username}, você não tem pontos suficientes para apostar essa quantia!`);
+      }
+    } else {
+      client.say(channel, `@${username}, você precisa de pontos para jogar no cassino!`);
+    }
+  });
+}
 
 
 //loja
@@ -590,4 +708,5 @@ client.on('message', (channel, tags, message, self) => {
 // Fechar a conexão com o banco de dados quando não for mais necessário
 process.on('exit', () => {
   db.close();
+});
 });
